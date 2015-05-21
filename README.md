@@ -1,4 +1,4 @@
-single-page-app-angularjs
-=========================
+cocooncms with angular magic
+============================
 
-Demo : http://demo.codeforgeek.com/single-page-app-angularjs/
+Demo : coming soon!
