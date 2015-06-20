@@ -1,4 +1,4 @@
-var app = angular.module('cocooncms-app',['ngRoute']);
+var app = angular.module('cocooncms-app',['ngRoute', 'ngSanitize']);
 
 
 var articles_db = 'https://docs.google.com/spreadsheets/d/1WirgJFgoLQJxNB7_2Gn2ull13B3cYyRVU5vPbzt5o78/pubhtml';
@@ -77,7 +77,7 @@ app.config(function($routeProvider){
   return {
     restrict: 'E',
     replace: true,
-    template: '<p>{{article.author_info}}</p>' 
+    template: '<span ng-bind-html="article.author_info | unsafe"></span>'
   };
 })
 
@@ -113,7 +113,7 @@ app.config(function($routeProvider){
   };
 })
 
-
+// connect to google via article service
 
 app.controller('articleController', ['$scope', 'article',
   function ($scope, article) {
@@ -123,6 +123,16 @@ app.controller('articleController', ['$scope', 'article',
     });
 }])
 
+// filter our formatted strings so they are deemed safe for parsing into HTML
+
+.filter('unsafe', function($sce) {
+    return function(val) {
+        return $sce.trustAsHtml(val);
+    };
+})
+
+
+// service connecting to google via tabletop.js
 
 app.factory('article', ['$rootScope',
   function($rootScope){
