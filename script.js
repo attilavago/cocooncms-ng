@@ -123,9 +123,18 @@ app.controller('articleController', ['$scope', 'article',
     });
 }])
 
-// filter our formatted strings so they are deemed safe for parsing into HTML
+app.controller('frontController', ['$scope', 'front',
+  function ($scope, front) {
+    front.query(function(data) {
+      $scope.articles = data;
+      console.log(data);
+    });
+}])
 
-.filter('unsafe', function($sce) {
+// filter our formatted strings so they are deemed safe for parsing into HTML
+// in directive then use: ng-bind-html="foo.bar | unsafe" inside tag
+
+app.filter('unsafe', function($sce) {
     return function(val) {
         return $sce.trustAsHtml(val);
     };
@@ -133,6 +142,26 @@ app.controller('articleController', ['$scope', 'article',
 
 
 // service connecting to google via tabletop.js
+
+app.factory('front', ['$rootScope',
+  function($rootScope){
+    return {
+      query: function(callback) {
+        Tabletop.init({
+          key: '1J1U6BKpuuScm7hFPFsoQVuAm7sscLjB4PX4vJ1DAUfE',
+          simpleSheet: true,
+          parseNumbers: true,
+          callback: function(data, tabletop) {
+            if(callback && typeof(callback) === "function") {
+              $rootScope.$apply(function() {
+                callback(data);
+              });
+            }
+          }
+        });
+      }
+    };
+}])
 
 app.factory('article', ['$rootScope',
   function($rootScope){
